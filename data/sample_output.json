@@ -1,0 +1,46 @@
+{
+  "personal_details": {
+    "name": "Kowshik",
+    "email": "kowshik@example.com",
+    "phone": "+91-9876543210",
+    "github": "https://github.com/kowshik",
+    "linkedin": "https://linkedin.com/in/kowshik"
+  },
+  "skills": [
+    "Java",
+    "Python",
+    "React",
+    "Spring Boot"
+  ],
+  "projects": [
+    {
+      "title": "Resume Information Extractor",
+      "description": "Built a system that parses resume PDF text and matches sections.",
+      "technologies": [
+        "Python",
+        "React"
+      ]
+    }
+  ],
+  "domains": [
+    "Backend",
+    "Frontend"
+  ],
+  "competencies": [
+    "Data Structures",
+    "REST API"
+  ],
+  "certifications": [
+    "Oracle Certified Professional Java SE Developer"
+  ],
+  "cgpa": 9.2,
+  "internships": [
+    {
+      "company": "Software Solutions",
+      "role": "Backend Engineering Intern",
+      "duration": "Jan 2025 - Jun 2025, Bangalore, India",
+      "description": "Worked on enterprise APIs and microservices."
+    }
+  ],
+  "experience_level": "Intermediate"
+}
