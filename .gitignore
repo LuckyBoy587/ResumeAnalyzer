@@ -4,3 +4,4 @@ __pycache__/
 .idea/
 temp_*.pdf
 data/resume_data.json
+screenshots

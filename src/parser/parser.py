@@ -390,7 +390,9 @@ def extract_projects_structured(project_lines: List[str]) -> List[Dict[str, Any]
                 tech_str = parts[1].strip()
                 techs = [t.strip() for t in re.split(r',|\s|&', tech_str) if t.strip()]
             else:
-                if len(content) < 50:
+                action_verbs = {"developed", "built", "implemented", "designed", "created", "led", "managed", "worked", "collaborated", "assisted", "used", "utilized", "optimized", "programmed", "engineered"}
+                first_word = content.split()[0].lower().strip(":,.-*") if content.split() else ""
+                if len(content) < 50 and first_word not in action_verbs:
                     is_new_project = True
                     title = content
         elif " - " in line_clean and len(line_clean) < 100:
@@ -467,7 +469,7 @@ def is_probable_header(line: str) -> bool:
 
     if "," in clean_line:
         parts = clean_line.split(",")
-        suffix = parts[-1].strip().lower().replace(".", "")
+        suffix = re.sub(r"\(.*?\)", "", parts[-1]).strip().lower().replace(".", "")
         if suffix in VALID_LOCATION_SUFFIXES:
             return True
 
@@ -477,7 +479,12 @@ def is_probable_header(line: str) -> bool:
             return True
 
     if len(words) <= 4 and is_capitalized:
-        if not clean_line.endswith(".") and not clean_line.endswith(";"):
+        if clean_line.endswith(".") or clean_line.endswith(";"):
+            last_word = words[-1].lower().rstrip(".;")
+            common_abbrevs = {"inc", "co", "ltd", "corp", "llc", "pvt", "plc", "univ", "dept", "inst", "assoc", "tech", "dev", "eng", "sol", "syst", "b.s", "m.s", "ph.d"}
+            if last_word in common_abbrevs or (len(last_word) <= 3 and last_word.isalpha()):
+                return True
+        else:
             return True
 
     return False
@@ -597,13 +604,13 @@ def extract_internships_structured(experience_lines: List[str]) -> List[Dict[str
             header_lines.pop(role_idx)
 
         # C. Find location and company from remaining lines
-        if len(header_lines) >= 2:
+        if len(header_lines) >= 1:
             loc_idx = -1
             for idx, line in enumerate(header_lines):
                 clean_line = re.sub(r"^[◦\u25e6➢•▪\*活跃\-\s]+", "", line).strip()
                 if "," in clean_line:
                     parts = clean_line.split(",")
-                    suffix = parts[-1].strip().lower().replace(".", "")
+                    suffix = re.sub(r"\(.*?\)", "", parts[-1]).strip().lower().replace(".", "")
                     if suffix in VALID_LOCATION_SUFFIXES:
                         loc_idx = idx
                         location = clean_line
@@ -627,7 +634,25 @@ def extract_internships_structured(experience_lines: List[str]) -> List[Dict[str
                 is_desc = False
                 if company:
                     comp_lower = company.lower()
-                    if len(company.split()) > 4 and any(w in comp_lower for w in ["startup", "recruitment", "branding", "company", "saas", "technology", "services", "solutions"]):
+                    # Past tense verbs or placeholder lines indicate a description
+                    start_verbs = {
+                        "develop", "developed", "developing",
+                        "implement", "implemented", "implementing",
+                        "design", "designed", "designing",
+                        "manage", "managed", "managing",
+                        "create", "created", "creating",
+                        "lead", "led", "leading",
+                        "work", "worked", "working",
+                        "collaborate", "collaborated", "collaborating",
+                        "build", "built", "building",
+                        "write", "wrote", "writing",
+                        "assist", "assisted", "assisting",
+                        "coordinate", "coordinated", "coordinating",
+                        "support", "supported", "supporting",
+                        "maintain", "maintained", "maintaining",
+                    }
+                    first_word = company.split()[0].lower().strip(":,.-*") if company.split() else ""
+                    if first_word in start_verbs:
                         is_desc = True
                     if company.startswith("___") or company.startswith("---") or company.startswith("..."):
                         is_desc = True
@@ -675,7 +700,7 @@ def extract_cgpa(text: str, education_text: Optional[str] = None) -> Optional[fl
     """
     search_text = education_text if education_text else text
 
-    pattern1 = r"\b(?:cgpa|gpa|g\.p\.a|c\.g\.p\.a)[:\-\s]*(\d{1,2}(?:\.\d{1,2})?)"
+    pattern1 = r"\b(?:cgpa|gpa|g\.p\.a|c\.g\.p\.a)\b(?:[\s:\-]*of)?[:\-\s]*(\d{1,2}(?:\.\d{1,2})?)"
     pattern2 = r"(\d{1,2}\.\d{1,2})\s*(?:/10|cgpa|gpa)"
 
     match1 = re.search(pattern1, search_text, re.IGNORECASE)
