@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "pycharm-tools": {
+      "type": "stdio",
+      "env": {
+        "IJ_MCP_SERVER_PROJECT_PATH": "D:/College Theory Stuff/ResumeAnalyzer",
+        "IJ_MCP_SERVER_PORT": "64462"
+      },
+      "command": "D:\\JetBrains IDEs\\PyCharm 2\\bin\\pycharm64.exe",
+      "args": [
+        "stdioMcpServer"
+      ]
+    }
+  }
+}
