@@ -6,8 +6,70 @@ import spacy
 from typing import Dict, List, Set, Any, Optional
 from spacy.matcher import PhraseMatcher
 from src.extractor.extractor import extract_text_from_pdf
+try:
+    from transformers import pipeline, AutoTokenizer, AutoModelForTokenClassification
+    import torch
+    HAS_TRANSFORMERS = True
+except ImportError:
+    HAS_TRANSFORMERS = False
 
 logger = logging.getLogger(__name__)
+
+_resume_ner = None
+
+def get_resume_ner():
+    if not HAS_TRANSFORMERS:
+        logger.warning("Transformers and torch are not installed. BERT NER is disabled.")
+        return None
+    global _resume_ner
+    if _resume_ner is None:
+        model_name = "yashpwr/resume-ner-bert-v2"
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModelForTokenClassification.from_pretrained(model_name)
+        _resume_ner = pipeline(
+            "token-classification",
+            model=model,
+            tokenizer=tokenizer,
+            aggregation_strategy="simple"
+        )
+    return _resume_ner
+
+def extract_entities_with_bert(text: str) -> Dict[str, List[str]]:
+    """
+    Runs the BERT NER pipeline on the text in chunks to avoid token length limits.
+    """
+    entities = {}
+    if not HAS_TRANSFORMERS:
+        return entities
+    try:
+        ner = get_resume_ner()
+        if ner is None:
+            return entities
+        # Split text into paragraphs or lines to keep chunks well under 512 tokens
+        chunks = [c.strip() for c in text.split("\n") if c.strip()]
+        for chunk in chunks:
+            if len(chunk) < 3:
+                continue
+            if len(chunk) > 1500:
+                chunk = chunk[:1500]
+            try:
+                results = ner(chunk)
+                for ent in results:
+                    label = ent.get("entity_group")
+                    word = ent.get("word", "").strip()
+                    if label and word:
+                        word = word.replace("##", "").strip()
+                        word = word.strip(".,:-*•▪ ")
+                        if len(word) > 1:
+                            if label not in entities:
+                                entities[label] = []
+                            if word not in entities[label]:
+                                entities[label].append(word)
+            except Exception as e:
+                logger.warning(f"Error running BERT NER on chunk: {e}")
+    except Exception as e:
+        logger.error(f"Failed to initialize or run BERT NER model: {e}")
+    return entities
 
 # Lexicographical mapping structures
 SKILL_MAP = {
@@ -771,6 +833,9 @@ def parse_college_resume_intelligent(local_path: str, clean_text: Optional[str] 
     nlp = get_nlp_pipeline()
     doc = nlp(clean_text)
 
+    # 0. Extract entities via BERT NER model
+    bert_entities = extract_entities_with_bert(clean_text)
+
     # 1. Segment structural sections
     sections = split_resume_into_sections(clean_text)
 
@@ -785,6 +850,26 @@ def parse_college_resume_intelligent(local_path: str, clean_text: Optional[str] 
             if link.startswith("mailto:"):
                 email = link[7:]
                 break
+
+    # Integrate BERT results for name, email, phone
+    bert_names = bert_entities.get("Name", [])
+    if bert_names:
+        for b_name in bert_names:
+            b_name_clean = re.sub(r'[^a-zA-Z\s]', '', b_name).strip()
+            words = b_name_clean.split()
+            if 2 <= len(words) <= 4:
+                name = b_name_clean
+                break
+        else:
+            name = bert_names[0]
+
+    bert_emails = bert_entities.get("Email Address", [])
+    if not email and bert_emails:
+        email = bert_emails[0]
+
+    bert_phones = bert_entities.get("Phone", [])
+    if not phone and bert_phones:
+        phone = bert_phones[0]
 
     github = extract_social_link(links, clean_text, "github.com", r"(?:https?://)?(?:www\.)?github\.com/[a-zA-Z0-9_-]+")
     linkedin = extract_social_link(links, clean_text, "linkedin.com", r"(?:https?://)?(?:www\.)?linkedin\.com/(?:in|pub)/[a-zA-Z0-9_-]+")
@@ -845,6 +930,16 @@ def parse_college_resume_intelligent(local_path: str, clean_text: Optional[str] 
             elif ent_clean in COMPETENCY_MAP:
                 if not _is_institutional_context(doc, ent.start, ent.end):
                     competencies.add(COMPETENCY_MAP[ent_clean])
+
+    # Integrate BERT skills
+    bert_skills = bert_entities.get("Skills", [])
+    for bs in bert_skills:
+        bs_lower = bs.lower().strip()
+        if bs_lower in SKILL_MAP:
+            skills.add(SKILL_MAP[bs_lower])
+        else:
+            if len(bs) >= 2 and len(bs) <= 30 and not bs.isdigit():
+                skills.add(bs)
 
     skills_list = sorted(list(skills))
     domains_list = sorted(list(domains))
