@@ -14,6 +14,7 @@ def test_match_section_header_fuzzy():
     assert match_section_header_fuzzy("Employment History") == "EXPERIENCE"
     assert match_section_header_fuzzy("Work Experience") == "EXPERIENCE"
     assert match_section_header_fuzzy("Key Projects") == "PROJECTS"
+    assert match_section_header_fuzzy("Technical Experience") == "PROJECTS"
     assert match_section_header_fuzzy("Core Competencies") == "SKILLS"
     assert match_section_header_fuzzy("Licenses & Certifications") == "CERTIFICATIONS"
     assert match_section_header_fuzzy("Contact Info") == "HEADER"
@@ -74,3 +75,32 @@ def test_extract_internships_structured():
     assert internships[0]["role"] == "Software Engineer Intern"
     assert "May 2024 - Aug 2024" in internships[0]["duration"]
     assert "Worked on Gemini models" in internships[0]["description"]
+
+    # Test combined role and company separated by hyphen
+    experience_lines_combined = [
+        "HCL - Software Engineering Intern",
+        "• Engineered a full-stack image gallery application.",
+    ]
+    internships_combined = extract_internships_structured(experience_lines_combined)
+    assert len(internships_combined) == 1
+    assert internships_combined[0]["company"] == "HCL"
+    assert internships_combined[0]["role"] == "Software Engineering Intern"
+
+    # Test combined role and company separated by em-dash (—) and en-dash (–)
+    experience_lines_em = [
+        "HCL - Software Engineering Intern",
+        "• Engineered a full-stack image gallery application.",
+    ]
+    internships_em = extract_internships_structured(experience_lines_em)
+    assert len(internships_em) == 1
+    assert internships_em[0]["company"] == "HCL"
+    assert internships_em[0]["role"] == "Software Engineering Intern"
+
+    experience_lines_en = [
+        "HCL – Software Engineering Intern",
+        "• Engineered a full-stack image gallery application.",
+    ]
+    internships_en = extract_internships_structured(experience_lines_en)
+    assert len(internships_en) == 1
+    assert internships_en[0]["company"] == "HCL"
+    assert internships_en[0]["role"] == "Software Engineering Intern"

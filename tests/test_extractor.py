@@ -27,8 +27,8 @@ def test_extract_text_from_pdf_mocked(mock_fitz_open):
     
     # We pass a fake path
     with mock.patch("src.extractor.extractor.os.path.exists", return_value=True):
-        text = extract_text_from_pdf("dummy.pdf")
-        
+        text = extract_text_from_pdf(r"D:\College Theory Stuff\ResumeAnalyzer\data\Resume.pdf")
+
     assert "Spanning header text" in text
     assert "Left column text" in text
     assert "Right column text" in text

@@ -43,3 +43,9 @@ project-root/
 ├── Dockerfile       # Container definition for deployment
 └── requirements.txt # Unified dependencies
 ```
+
+## Rules
+
+This project is intended to be run on Google Colab servers. 
+Do not try to run it on my local machine.
+Do not run any bash commands to execute code or install dependencies.

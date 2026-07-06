@@ -69,6 +69,8 @@ def extract_entities_with_bert(text: str) -> Dict[str, List[str]]:
                 logger.warning(f"Error running BERT NER on chunk: {e}")
     except Exception as e:
         logger.error(f"Failed to initialize or run BERT NER model: {e}")
+
+    print("Entities: ", entities)
     return entities
 
 # Lexicographical mapping structures
@@ -225,15 +227,15 @@ def match_section_header_fuzzy(header_text: str) -> str:
             "educational profile", "educational qualification", "studies", "schooling",
             "academic record", "qualifications"
         ],
+        "PROJECTS": [
+            "projects", "academic undertakings", "academic projects", "key projects",
+            "personal projects", "undertakings", "technical projects", "ventures",
+            "selected projects", "notable projects", "project work", "technical experience"
+        ],
         "EXPERIENCE": [
             "experience", "work experience", "employment history", "professional experience",
             "internships", "work history", "industrial training", "professional background",
             "career history", "employment", "professional ventures", "work undertakings"
-        ],
-        "PROJECTS": [
-            "projects", "academic undertakings", "academic projects", "key projects",
-            "personal projects", "undertakings", "technical projects", "ventures",
-            "selected projects", "notable projects", "project work"
         ],
         "SKILLS": [
             "skills", "core competencies", "technical skills", "competencies",
@@ -723,12 +725,31 @@ def extract_internships_structured(experience_lines: List[str]) -> List[Dict[str
                     location = pos_location
 
         # Split role/company/location if they are combined in role
-        if role and "," in role:
-            parts = [p.strip() for p in role.split(",")]
+        if role:
+            split_pattern = r'\s+[\-\u2013\u2014|]\s+'
+            parts = []
+            if re.search(split_pattern, role):
+                parts = [p.strip() for p in re.split(split_pattern, role) if p.strip()]
+            elif "," in role:
+                parts = [p.strip() for p in role.split(",") if p.strip()]
+
             if len(parts) >= 2:
-                pos_role = parts[0]
-                pos_company = parts[1]
+                part1, part2 = parts[0], parts[1]
+                part1_has_role = any(re.search(r"\b" + re.escape(kw) + r"\b", part1.lower()) for kw in role_kws)
+                part2_has_role = any(re.search(r"\b" + re.escape(kw) + r"\b", part2.lower()) for kw in role_kws)
+
+                if part2_has_role and not part1_has_role:
+                    pos_role = part2
+                    pos_company = part1
+                elif part1_has_role and not part2_has_role:
+                    pos_role = part1
+                    pos_company = part2
+                else:
+                    pos_role = part1
+                    pos_company = part2
+
                 pos_location = ", ".join(parts[2:]) if len(parts) > 2 else ""
+
                 if not company or company.startswith("___"):
                     company = pos_company
                 if not location:
