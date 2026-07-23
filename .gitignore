@@ -6,3 +6,4 @@ temp_*.pdf
 data/resume_data.json
 screenshots
 .env
+uv.lock

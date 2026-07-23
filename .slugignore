@@ -1,0 +1,11 @@
+*.pdf
+data/
+notebooks/
+tests/
+screenshots/
+exported_resumes.json
+export_resumes.py
+.pytest_cache/
+models/cache/
+.venv/
+uv.lock

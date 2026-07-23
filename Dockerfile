@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -7,9 +7,9 @@ ENV PYTHONPATH=/app
 
 WORKDIR /app
 
-COPY pyproject.toml .
+COPY requirements.txt .
 
-RUN pip install --no-cache-dir .
+RUN pip install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
 
 COPY . .
 
