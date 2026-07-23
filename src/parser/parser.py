@@ -132,20 +132,28 @@ _nlp = None
 
 def get_nlp_pipeline():
     """
-    Lazy loads the en_core_web_sm spaCy model. Downloads it if missing.
+    Lazy loads the en_core_web_sm spaCy model. Downloads it if missing,
+    or falls back gracefully to a blank English model if downloading fails at runtime (e.g., on Heroku).
     """
     global _nlp
     if _nlp is None:
         try:
             logger.info("Loading spaCy model 'en_core_web_sm'...")
             _nlp = spacy.load("en_core_web_sm")
-        except Exception:
-            logger.warning("spaCy model 'en_core_web_sm' not found. Downloading...")
-            import subprocess
-            import sys
-            subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"], check=True)
-            _nlp = spacy.load("en_core_web_sm")
-            logger.info("Successfully downloaded and loaded spaCy model.")
+        except Exception as e:
+            logger.warning(f"spaCy model 'en_core_web_sm' not found ({e}). Attempting runtime download...")
+            try:
+                import subprocess
+                import sys
+                subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"], check=True)
+                _nlp = spacy.load("en_core_web_sm")
+                logger.info("Successfully downloaded and loaded spaCy model 'en_core_web_sm'.")
+            except Exception as dl_err:
+                logger.error(
+                    f"Failed to download spaCy model at runtime: {dl_err}. "
+                    "Falling back to blank 'en' spaCy pipeline."
+                )
+                _nlp = spacy.blank("en")
     return _nlp
 
 

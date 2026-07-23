@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+echo "-----> Downloading spaCy model en_core_web_sm during build phase..."
+python -m spacy download en_core_web_sm

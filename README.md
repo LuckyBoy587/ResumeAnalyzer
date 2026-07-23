@@ -82,8 +82,9 @@ Make sure you have Python 3.9+ installed (developed on Python 3.13).
 
 1. **Install Dependencies**:
    ```bash
-   pip install -r requirements.txt
-   python -m spacy download en_core_web_sm
+   uv sync
+   # or using standard pip:
+   pip install .
    ```
 
 2. **Run Tests**:
