@@ -1,0 +1,26 @@
+{
+  "name": "resume-analyzer",
+  "description": "A FastAPI microservice to parse structured details from resume PDFs.",
+  "keywords": [
+    "fastapi",
+    "python",
+    "resume-parser",
+    "spacy",
+    "pdf",
+    "heroku"
+  ],
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "env": {
+    "DATABASE_URL": {
+      "description": "Database connection URL (automatically provisioned by Heroku Postgres)",
+      "required": false
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}

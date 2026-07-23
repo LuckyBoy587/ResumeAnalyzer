@@ -16,7 +16,7 @@ def get_normalized_db_url() -> str:
     """
     Normalizes the database URL, replacing postgres:// with postgresql:// if needed.
     """
-    url = DATABASE_URL
+    url = os.getenv("DATABASE_URL") or DATABASE_URL
     if url and url.startswith("postgres://"):
         url = url.replace("postgres://", "postgresql://", 1)
     return url
@@ -28,6 +28,8 @@ def get_db_connection():
     url = get_normalized_db_url()
     if not url:
         raise ValueError("DATABASE_URL environment variable is not set.")
+    if "sslmode" not in url and "localhost" not in url and "127.0.0.1" not in url:
+        return psycopg2.connect(url, sslmode="require")
     return psycopg2.connect(url)
 
 def init_db():

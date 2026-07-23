@@ -103,27 +103,59 @@ Make sure you have Python 3.9+ installed (developed on Python 3.13).
 
 ## 4. Deployment Instructions
 
-To deploy this service to Hugging Face Spaces:
+### Deploying to Heroku
 
-### Step 1: Create a Space on Hugging Face
-1. Log in to your [Hugging Face Account](https://huggingface.co/).
-2. Navigate to **Spaces** and click **Create new Space**.
-3. Choose a name (e.g., `resume-parser`).
-4. Select the **Docker** SDK.
-5. Select the **Blank** template.
-6. Select **Public** visibility.
-7. Click **Create Space**.
+#### Method A: Heroku CLI / Git Deployment (Standard Buildpack)
 
-### Step 2: Push Code to Hugging Face Space Git Repository
-You can push the files to Hugging Face Space using Git:
+1. **Log in to Heroku**:
+   ```bash
+   heroku login
+   ```
 
-```bash
-git init
-git add .
-git commit -m "Refactored single-repository resume parser service"
-git remote add origin https://huggingface.co/spaces/<your-username>/<your-space-name>
-git branch -M main
-git push -f origin main
-```
+2. **Create a Heroku App**:
+   ```bash
+   heroku create resume-analyzer-api
+   ```
+
+3. **Provision PostgreSQL Addon**:
+   ```bash
+   heroku addons:create heroku-postgresql:mini
+   ```
+
+4. **Deploy via Git**:
+   ```bash
+   git add .
+   git commit -m "Configure Heroku deployment"
+   git push heroku main
+   ```
+
+5. **Verify Deployment**:
+   ```bash
+   heroku open
+   ```
+
+#### Method B: Container / Docker Deployment (`heroku.yml`)
+
+1. **Set Heroku App Stack to Container**:
+   ```bash
+   heroku stack:set container -a resume-analyzer-api
+   ```
+
+2. **Deploy via Git**:
+   ```bash
+   git push heroku main
+   ```
+
+---
+
+### Deploying to Hugging Face Spaces
+
+1. **Create a Space on Hugging Face**: Choose **Docker** SDK with Blank template.
+2. **Push Code**:
+   ```bash
+   git remote add hf https://huggingface.co/spaces/<your-username>/<your-space-name>
+   git push -f hf main
+   ```
+
 
 
