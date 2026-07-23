@@ -1,0 +1,126 @@
+[
+  {
+    "id": "0a5f2acd-12b7-4bc1-8f8c-d82d830500c9",
+    "candidate_name": "KOWSHIK BASKARAN",
+    "email": "kowshi587@gmail.com",
+    "phone": "+91-8778987449",
+    "github_url": "https://github.com/LuckyBoy587",
+    "linkedin_url": "http://www.linkedin.com/in/kowshi587",
+    "experience_level": "Intermediate",
+    "cgpa": null,
+    "skills": [
+      "AWS",
+      "CSS",
+      "Django",
+      "Docker",
+      "GitHub",
+      "HTML",
+      "Java",
+      "JavaScript",
+      "MongoDB",
+      "MySQL",
+      "Python",
+      "React",
+      "Spring Boot",
+      "TypeScript"
+    ],
+    "domains": [
+      "Android Development",
+      "Artificial Intelligence",
+      "Backend",
+      "Machine Learning"
+    ],
+    "competencies": [
+      "Agile Methodology",
+      "Algorithms",
+      "Data Structures & Algorithms",
+      "OOP",
+      "REST API"
+    ],
+    "raw_resume_json": {
+      "cgpa": null,
+      "skills": [
+        "AWS",
+        "CSS",
+        "Django",
+        "Docker",
+        "GitHub",
+        "HTML",
+        "Java",
+        "JavaScript",
+        "MongoDB",
+        "MySQL",
+        "Python",
+        "React",
+        "Spring Boot",
+        "TypeScript"
+      ],
+      "domains": [
+        "Android Development",
+        "Artificial Intelligence",
+        "Backend",
+        "Machine Learning"
+      ],
+      "projects": [
+        {
+          "title": "Car-pooling System",
+          "description": "Developed a Java-based carpooling platform to connect drivers and passengers dynamically. Implemented ride-matching algorithms using DSA concepts for efficient search and allocation. Used JDBC for database operations (CRUD) and optimized SQL queries for performance.",
+          "technologies": [
+            "JDBC",
+            "Java",
+            "MySQL"
+          ]
+        },
+        {
+          "title": "Customer Relationship Management (CRM) System",
+          "description": "Built a CRM application to manage customer data, track interactions, and automate sales pipeline. Designed REST APIs using Spring Boot and integrated MySQL database for persistent storage. Implemented authentication and role-based access control.",
+          "technologies": [
+            "Java",
+            "MySQL",
+            "Spring Boot"
+          ]
+        },
+        {
+          "title": "LeetCode Coding Helper Extension",
+          "description": "Developed a Chrome extension that enhances LeetCode problem-solving using AI-powered assistance through Google Gemini API. Implemented features for problem explanation, approach guidance, and code review. Designed a dark-themed, responsive UI using modern web standards (Manifest V3).",
+          "technologies": [
+            "CSS",
+            "HTML",
+            "JavaScript"
+          ]
+        }
+      ],
+      "internships": [
+        {
+          "role": "Incoming Associate Software Engineer",
+          "company": "ServiceNow",
+          "duration": "08/2026 - Present (Incoming) Hyderabad, India",
+          "description": "Selected to develop scalable cloud-based features using Java, OOP, and Agile methodologies Will work with CI pipelines, relational databases, and AI-integrated workflows"
+        }
+      ],
+      "competencies": [
+        "Agile Methodology",
+        "Algorithms",
+        "Data Structures & Algorithms",
+        "OOP",
+        "REST API"
+      ],
+      "certifications": [
+        "Btech in Information Technology Sri Krishna College of Engineering and Technology 09/2023 - 05/2027 Coimbatore, India",
+        "Solved 1100+ problems in LeetCode (focused on DSA & problem-solving).",
+        "Certified in Android Development.",
+        "Certified in Machine Learning."
+      ],
+      "experience_level": "Intermediate",
+      "personal_details": {
+        "name": "KOWSHIK BASKARAN",
+        "email": "kowshi587@gmail.com",
+        "phone": "+91-8778987449",
+        "github": "https://github.com/LuckyBoy587",
+        "linkedin": "http://www.linkedin.com/in/kowshi587"
+      }
+    },
+    "created_at": "2026-07-07T03:26:00.083431+00:00",
+    "updated_at": "2026-07-07T03:47:24.118163+00:00"
+  }
+]

@@ -5,3 +5,4 @@ __pycache__/
 temp_*.pdf
 data/resume_data.json
 screenshots
+.env
