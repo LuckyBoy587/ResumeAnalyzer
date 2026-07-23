@@ -2,11 +2,17 @@ import os
 import re
 from pydantic import BaseModel, Field, validator
 
+from typing import Dict, Any, List, Optional
+
 class ParseRequest(BaseModel):
     url: str = Field(
         ...,
         description="The remote URL of the resume PDF (Google Drive, GitHub, direct) or local path.",
         example="https://drive.google.com/file/d/1C8svOrGqiFxDFD8IfNid2sAFG54VOdva/view"
+    )
+    include_embedding: bool = Field(
+        default=True,
+        description="Whether to generate and return a 384-dimensional sentence embedding for the resume."
     )
 
     @validator('url')
@@ -45,3 +51,20 @@ class ParseRequest(BaseModel):
                 raise ValueError(f"Unsupported local file type '{ext}'. Only PDF resumes are supported.")
                 
         return url_val
+
+
+class EmbeddingMetadata(BaseModel):
+    model_name: str = Field(..., description="Name of the embedding model used")
+    dimension: int = Field(..., description="Dimension of the embedding vector")
+    status: str = Field(..., description="Generation status: 'success', 'failed', or 'skipped'")
+    char_count: int = Field(..., description="Character count of the embedding text")
+    error_message: Optional[str] = Field(None, description="Error message if generation failed")
+    generated_at: str = Field(..., description="ISO timestamp of embedding generation")
+
+
+class ParseResponse(BaseModel):
+    parsed_resume: Dict[str, Any] = Field(..., description="Structured resume entities and sections")
+    embedding_text: str = Field(..., description="Canonical text representation generated for embedding")
+    embedding_metadata: EmbeddingMetadata = Field(..., description="Metadata related to embedding generation")
+    embedding: Optional[List[float]] = Field(None, description="384-dimensional vector embedding (null if failed or skipped)")
+
