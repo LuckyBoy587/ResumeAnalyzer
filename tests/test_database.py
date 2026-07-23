@@ -1,13 +1,14 @@
+import os
 import pytest
 from unittest import mock
 from src.database.db import get_normalized_db_url, init_db, save_resume_to_db
 
-@mock.patch("src.database.db.DATABASE_URL", "postgres://user:pass@host:5432/db")
+@mock.patch.dict(os.environ, {"DATABASE_URL": "postgres://user:pass@host:5432/db"})
 def test_get_normalized_db_url_postgres():
     url = get_normalized_db_url()
     assert url == "postgresql://user:pass@host:5432/db"
 
-@mock.patch("src.database.db.DATABASE_URL", "postgresql://user:pass@host:5432/db")
+@mock.patch.dict(os.environ, {"DATABASE_URL": "postgresql://user:pass@host:5432/db"})
 def test_get_normalized_db_url_postgresql():
     url = get_normalized_db_url()
     assert url == "postgresql://user:pass@host:5432/db"

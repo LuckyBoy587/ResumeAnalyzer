@@ -10,7 +10,7 @@ def test_health_check():
     assert response.status_code == 200
     assert response.json() == {"status": "running"}
 
-@mock.patch("src.pipeline.resume_parser.parse_resume")
+@mock.patch("api.app.parse_resume")
 def test_parse_endpoint_with_embedding(mock_parse_resume):
     mock_parse_resume.return_value = {
         "parsed_resume": {
@@ -46,11 +46,10 @@ def test_parse_endpoint_with_embedding(mock_parse_resume):
     assert data["embedding_metadata"]["dimension"] == 384
     assert len(data["embedding"]) == 384
 
-@mock.patch("src.pipeline.resume_parser.parse_resume")
-def test_parse_endpoint_invalid_url(mock_parse_resume):
+def test_parse_endpoint_invalid_url():
     payload = {
         "url": "invalid_url_without_protocol",
         "include_embedding": True
     }
     response = client.post("/parse", json=payload)
-    assert response.status_code == 400
+    assert response.status_code == 422

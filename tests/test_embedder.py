@@ -1,3 +1,4 @@
+import sys
 import pytest
 from unittest import mock
 import numpy as np
@@ -9,12 +10,9 @@ def test_generate_embedding_empty_text():
     assert metadata["status"] == "failed"
     assert "empty" in metadata["error_message"].lower()
 
-@mock.patch("sentence_transformers.SentenceTransformer")
-def test_generate_embedding_success(mock_st_class):
-    # Mock model encode method to return 384 dummy float array
+def test_generate_embedding_success():
     mock_model_instance = mock.MagicMock()
     mock_model_instance.encode.return_value = np.zeros(384, dtype=np.float32)
-    mock_st_class.return_value = mock_model_instance
 
     embedder = SentenceTransformerEmbedder(model_name="dummy-model")
     embedder.model = mock_model_instance
