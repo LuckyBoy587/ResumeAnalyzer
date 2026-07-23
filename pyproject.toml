@@ -3,8 +3,12 @@ name = "resumeanalyzer"
 version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = [
-    "ipykernel>=7.3.0",
     "psycopg2-binary>=2.9.12",
     "python-dotenv>=1.2.2",
     "requests>=2.34.2",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.20.0",
+    "pydantic>=2.0.0",
+    "spacy>=3.7.0",
+    "PyMuPDF>=1.23.0"
 ]
